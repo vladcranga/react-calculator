@@ -14,7 +14,7 @@ body {
 .grid-calc {
     display: grid;
     justify-content: center; /* horizontal alignment */
-    align-content: center; /* vertical alignment of items*/
+    align-content: center; /* vertical alignment*/
     min-height: 100vh;
     grid-template-columns: repeat(4, 120px);
     grid-template-rows: minmax(110px, auto) repeat(5, 95px);
