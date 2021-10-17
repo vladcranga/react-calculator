@@ -50,10 +50,10 @@ body {
 
 .previous {
     color: rgb(255, 255, 255, 0.7);
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .current {
     color: rgb(255, 255, 255);
-    font-size: 20px;
+    font-size: 22px;
 }
