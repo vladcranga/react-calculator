@@ -14,7 +14,8 @@ class Calculator {
 
     // delete the last digit of the number
     delete() {
-
+        // create a string from index 0 to the penultimate index
+        this.current = this.current.toString().slice(0, -1)
     }
 
     // add a number to the screen
@@ -31,17 +32,47 @@ class Calculator {
             this.computeValue()
         }
         this.operation = operation
-        this.previous = this.current.toString() + ' ' + operation
+        this.previous = this.current
         this.current = ''
     }
 
     computeValue() {
-
+        let result 
+        // convert to float from string
+        const prev = parseFloat(this.previous)
+        const curr = parseFloat(this.current)
+        if (isNaN(prev) || isNaN(curr)) return
+        switch (this.operation){
+            case '+': 
+              result = prev + curr
+              break
+            case '-':
+                result = prev - curr
+                break
+            case '*':
+                result = prev * curr
+                break
+            case '÷':
+                result = prev / curr
+                break
+            default:
+                return
+        }
+        this.current = result
+        this.operation = undefined
+        this.previous = ''
     }
 
     updateScreen() {
         this.currentText.innerText = this.current
-        this.previousText.innerText = this.previous
+        if (this.operation != null) {
+            // string concatenation
+            this.previousText.innerText = `${this.previous} ${this.operation}`
+        }
+        else {
+            this.previousText.innerText = ''
+        }
+
     }
 
 }
@@ -72,7 +103,17 @@ opButtons.forEach(button => {
     })
 })
 
+eqButton.addEventListener('click', () => {
+    calculator.computeValue()
+    calculator.updateScreen()
+})
+
 clearButton.addEventListener('click', () => {
     calculator.clear()
+    calculator.updateScreen()
+})
+
+delButton.addEventListener('click', () => {
+    calculator.delete()
     calculator.updateScreen()
 })
