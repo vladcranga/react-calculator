@@ -1,5 +1,5 @@
 # JS-Calculator
-A calculator made in Javascript.
+A calculator made in JavaScript.
 
 Features:
 - add, subtract, multiply and divide integer and float numbers
