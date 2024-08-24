@@ -5,6 +5,7 @@ function Calculator() {
     const [current, setCurrent] = useState('');
     const [previous, setPrevious] = useState('');
     const [operation, setOperation] = useState(undefined);
+    const [history, setHistory] = useState([]);
 
     // calculator logic
     const clear = () => {
@@ -21,6 +22,8 @@ function Calculator() {
         if (number === '.' && current.includes('.')) return;
         setCurrent(current.toString() + number.toString());
       }, [current]);
+
+      const MAX_HISTORY_SIZE = 5
 
       const computeValue = useCallback(() => {
         let result;
@@ -43,10 +46,21 @@ function Calculator() {
           default:
             return;
         }
+        
+        result = parseFloat(result.toFixed(3))
+        const newEntry = `${previous} ${operation} ${current} = ${result}`;
+        const updatedHistory = [...history, newEntry];
+      
+        if (updatedHistory.length > MAX_HISTORY_SIZE) {
+          // remove the oldest entry
+          updatedHistory.shift(); 
+        }
+      
+        setHistory(updatedHistory);
         setCurrent(result.toString());
         setOperation(undefined);
         setPrevious('');
-      }, [current, previous, operation]);
+      }, [current, previous, operation, history]);
     
       const chooseOperation = useCallback((op) => {
         if (current === '') return;
@@ -70,13 +84,18 @@ function Calculator() {
         '8': () => addNumber(8),
         '9': () => addNumber(9),
         '0': () => addNumber(0),
+        '.': () => addNumber('.'),
+        ',': () => addNumber('.'),
         '+': () => chooseOperation('+'),
         '-': () => chooseOperation('-'),
         '*': () => chooseOperation('*'),
         '/': () => chooseOperation('÷'),
         '%': () => chooseOperation('÷'),
+        '=': () => computeValue(),
         'Enter': () => computeValue(),
-        'Backspace': () => deleteNumber()
+        'Backspace': () => deleteNumber(),
+        'c': () => clear(),
+        'C': () => clear()
     }), [addNumber, chooseOperation, computeValue, deleteNumber]);
     
     // event listener for key presses
@@ -97,29 +116,40 @@ function Calculator() {
     // html to jsx
     return ( 
       <div className='grid-calc'>
-        <div className='screen'>
-          <div className='previous'>{previous} {operation}</div>
-          <div className='current'>{current}</div>
+        <div className='calculator-container'>
+          <div className='screen'>
+            <div className='previous'>{previous} {operation}</div>
+            <div className='current'>{current}</div>
+          </div>
+          <button className='larger' onClick={clear}>C</button>
+          <button onClick={deleteNumber}>DEL</button>
+          <button onClick={() => chooseOperation('÷')}>÷</button>
+          <button onClick={() => addNumber('7')}>7</button>
+          <button onClick={() => addNumber('8')}>8</button>
+          <button onClick={() => addNumber('9')}>9</button>
+          <button onClick={() => chooseOperation('*')}>*</button>
+          <button onClick={() => addNumber('4')}>4</button>
+          <button onClick={() => addNumber('5')}>5</button>
+          <button onClick={() => addNumber('6')}>6</button>
+          <button onClick={() => chooseOperation('-')}>-</button>
+          <button onClick={() => addNumber('1')}>1</button>
+          <button onClick={() => addNumber('2')}>2</button>
+          <button onClick={() => addNumber('3')}>3</button>
+          <button onClick={() => chooseOperation('+')}>+</button>
+          <button onClick={() => addNumber('0')}>0</button>
+          <button onClick={() => addNumber('.')}>.</button>
+          <button className='larger' onClick={computeValue}>=</button>
         </div>
-        <button className='larger' onClick={clear}>C</button>
-        <button onClick={deleteNumber}>DEL</button>
-        <button onClick={() => chooseOperation('÷')}>÷</button>
-        <button onClick={() => addNumber('7')}>7</button>
-        <button onClick={() => addNumber('8')}>8</button>
-        <button onClick={() => addNumber('9')}>9</button>
-        <button onClick={() => chooseOperation('*')}>*</button>
-        <button onClick={() => addNumber('4')}>4</button>
-        <button onClick={() => addNumber('5')}>5</button>
-        <button onClick={() => addNumber('6')}>6</button>
-        <button onClick={() => chooseOperation('-')}>-</button>
-        <button onClick={() => addNumber('1')}>1</button>
-        <button onClick={() => addNumber('2')}>2</button>
-        <button onClick={() => addNumber('3')}>3</button>
-        <button onClick={() => chooseOperation('+')}>+</button>
-        <button onClick={() => addNumber('0')}>0</button>
-        <button onClick={() => addNumber('.')}>.</button>
-        <button className='larger' onClick={computeValue}>=</button>
-    </div>
+
+        <div className='history-container'>
+          <h2>History</h2>
+          <ul>
+            {history.map((entry, index) => (
+              <li key={index}>{entry}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     );
 }
 
