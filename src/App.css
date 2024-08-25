@@ -22,7 +22,7 @@ body {
 
 .calculator-container {
   display: grid;
-  grid-template-columns: repeat(4, 120px);
+  grid-template-columns: repeat(5, 120px);
   grid-template-rows: minmax(110px, auto) repeat(5, 95px);
 }
 
@@ -56,12 +56,12 @@ body {
 
 .previous {
   color: rgb(255, 255, 255, 0.7);
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .current {
   color: rgb(255, 255, 255);
-  font-size: 22px;
+  font-size: 40px;
 }
 
 .history-container {
@@ -81,6 +81,41 @@ body {
 }
 
 .history-container li {
-  padding: 5px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #ccc;
+  animation: background-color 0.3s ease-in-out;
+}
+
+.history-container li:nth-child(odd) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.history-container li:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes buttonPress {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.grid-calc button:active {
+  animation: buttonPress 0.1s ease-in-out;
+}
+
+/* responsive design */
+@media (max-width: 768px) {
+  .grid-calc {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .calculator-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .history-container {
+    max-width: 100%;
+  }
 }
