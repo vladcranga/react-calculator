@@ -43,6 +43,9 @@ function Calculator() {
           case '÷':
             result = prev / curr;
             break;
+          case '^':
+            result = Math.pow(prev, curr);
+            break;
           default:
             return;
         }
@@ -61,6 +64,28 @@ function Calculator() {
         setOperation(undefined);
         setPrevious('');
       }, [current, previous, operation, history]);
+
+      const squareRoot = useCallback(() => {
+        if (current === '') return;
+        setCurrent(Math.sqrt(parseFloat(current)).toString());
+      }, [current]);
+      
+      const toRadians = (degrees) => degrees * (Math.PI / 180);
+
+      const sin = useCallback(() => {
+        if (current === '') return;
+        setCurrent(Math.sin(parseFloat(toRadians(current))).toString());
+      }, [current]);
+
+      const cos = useCallback(() => {
+        if (current === '') return;
+        setCurrent(Math.cos(parseFloat(toRadians(current))).toFixed(3).toString());
+      }, [current]);
+
+      const tan = useCallback(() => {
+        if (current === '') return;
+        setCurrent(Math.tan(parseFloat(toRadians(current))).toFixed(3).toString());
+      }, [current]);      
     
       const chooseOperation = useCallback((op) => {
         if (current === '') return;
@@ -91,6 +116,7 @@ function Calculator() {
         '*': () => chooseOperation('*'),
         '/': () => chooseOperation('÷'),
         '%': () => chooseOperation('÷'),
+        '^': () => chooseOperation('^'),
         '=': () => computeValue(),
         'Enter': () => computeValue(),
         'Backspace': () => deleteNumber(),
@@ -121,21 +147,26 @@ function Calculator() {
             <div className='previous'>{previous} {operation}</div>
             <div className='current'>{current}</div>
           </div>
+          <button onClick={squareRoot}>√</button>
           <button className='larger' onClick={clear}>C</button>
           <button onClick={deleteNumber}>DEL</button>
           <button onClick={() => chooseOperation('÷')}>÷</button>
+          <button onClick={() => chooseOperation('^')}>^</button>
           <button onClick={() => addNumber('7')}>7</button>
           <button onClick={() => addNumber('8')}>8</button>
           <button onClick={() => addNumber('9')}>9</button>
           <button onClick={() => chooseOperation('*')}>*</button>
+          <button onClick={sin}>sin</button>
           <button onClick={() => addNumber('4')}>4</button>
           <button onClick={() => addNumber('5')}>5</button>
           <button onClick={() => addNumber('6')}>6</button>
           <button onClick={() => chooseOperation('-')}>-</button>
+          <button onClick={cos}>cos</button>
           <button onClick={() => addNumber('1')}>1</button>
           <button onClick={() => addNumber('2')}>2</button>
           <button onClick={() => addNumber('3')}>3</button>
           <button onClick={() => chooseOperation('+')}>+</button>
+          <button onClick={tan}>tan</button>
           <button onClick={() => addNumber('0')}>0</button>
           <button onClick={() => addNumber('.')}>.</button>
           <button className='larger' onClick={computeValue}>=</button>
