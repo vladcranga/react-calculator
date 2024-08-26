@@ -13,8 +13,10 @@ body {
 
 .grid-calc {
   display: grid;
-  justify-content: center; /* horizontal alignment */
-  align-content: center; /* vertical alignment */
+  /* horizontal alignment */
+  justify-content: center;
+  /* vertical alignment */
+  align-content: center;
   min-height: 100vh;
   grid-template-columns: 3fr 1fr;
   grid-template-rows: minmax(110px, auto) repeat(5, 95px);
@@ -44,7 +46,7 @@ body {
 
 .screen {
   grid-column: 1 / -1;
-  background-color:rgb(0, 0, 0, .75);
+  background-color: rgb(0, 0, 0, .75);
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -72,6 +74,9 @@ body {
 
 .history-container h2 {
   font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
   margin-bottom: 10px;
 }
 
@@ -94,10 +99,37 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
+.history-container button {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  text-align: center;
+  display: block;
+  width: 100%;
+}
+
+.history-container button:hover {
+  background-color: #ff4d4d;
+}
+
+
 @keyframes buttonPress {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.95); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0.95);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .grid-calc button:active {
