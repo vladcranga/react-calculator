@@ -18,6 +18,13 @@ cd react-calculator
 npm install
 ```
 
+4. Set up your environment variables:
+
+This project requires an API invoke URL. Obtain yours from AWS (or other services you're using), then create a .env file in the root of your project directory with the following content:
+```
+REACT_APP_API_URL=your_api_invoke_url
+```
+
 4. Start the development server:
 ```
 npm start
@@ -26,11 +33,15 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ## Features:
 - add, subtract, multiply and divide integer and float numbers
+- advanced functions
 - a clear button and a delete button: clear the entire number or just one digit
 - operation chaining
+- calculation history
+- keyboard support
 
 ![example picture](images/calculator.png)
 ![the result](/images/result.png)
+![the history feature](/images/history.png)
 
 ## Licence
 
