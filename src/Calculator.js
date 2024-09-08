@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import debounce from 'lodash.debounce';
+import { calculate } from './api';
 
 function Calculator() {
     // state hooks
@@ -18,6 +20,21 @@ function Calculator() {
         setHistory([]);
     };
 
+    const MAX_HISTORY_SIZE = 10
+
+    const updateHistory = (operationType, num1, num2, result) => {
+        const historyEntry = num2 !== null
+            ? `${num1} ${operationType} ${num2} = ${result}`
+            : `${operationType}(${num1}) = ${result}`;
+    
+        setHistory((prevHistory) => {
+            const updatedHistory = [historyEntry, ...prevHistory];
+            return updatedHistory.length > MAX_HISTORY_SIZE 
+                ? updatedHistory.slice(0, MAX_HISTORY_SIZE)
+                : updatedHistory;
+        });
+    };
+
     const deleteNumber = useCallback(() => {
         setCurrent(current.toString().slice(0, -1));
     }, [current]);
@@ -27,80 +44,69 @@ function Calculator() {
         setCurrent(current.toString() + number.toString());
     }, [current]);
 
-    const MAX_HISTORY_SIZE = 10
-
-    const computeValue = useCallback(() => {
-        let result;
-        const prev = parseFloat(previous);
-        const curr = parseFloat(current);
-        if (isNaN(prev) || isNaN(curr)) return;
-        switch (operation) {
-            case '+':
-                result = prev + curr;
-                break;
-            case '-':
-                result = prev - curr;
-                break;
-            case '*':
-                result = prev * curr;
-                break;
-            case '÷':
-                result = prev / curr;
-                break;
-            case '^':
-                result = Math.pow(prev, curr);
-                break;
-            default:
-                return;
+    const computeRegularOperation = debounce(async () => {
+        if (current === '' || previous === '') {
+            alert('Enter two numbers and an operation before calculating.');
+            return;
         }
 
-        result = parseFloat(result.toFixed(3))
+        try {
+            const num1 = parseFloat(previous);
+            const num2 = parseFloat(current);
+            const result = await calculate(operation, num1, num2);
+            const formattedResult = Number.isInteger(result) 
+                ? result : result.toFixed(3);
 
-        const newEntry = `${previous} ${operation} ${current} = ${result}`;
-        setHistory(history => {
-            const updatedHistory = [...history, newEntry];
-            if (updatedHistory.length > MAX_HISTORY_SIZE) {
-                updatedHistory.shift();
-            }
-            return updatedHistory;
-        });
+            setCurrent(formattedResult);
+            setPrevious('');
+            setOperation(undefined);
 
-        setCurrent(result.toString());
-        setOperation(undefined);
-        setPrevious('');
-    }, [current, previous, operation]);
-
-    const squareRoot = useCallback(() => {
-        if (current === '') return;
-        setCurrent(Math.sqrt(parseFloat(current)).toString());
-    }, [current]);
-
-    const toRadians = (degrees) => degrees * (Math.PI / 180);
-
-    const sin = useCallback(() => {
-        if (current === '') return;
-        setCurrent(Math.sin(parseFloat(toRadians(current))).toString());
-    }, [current]);
-
-    const cos = useCallback(() => {
-        if (current === '') return;
-        setCurrent(Math.cos(parseFloat(toRadians(current))).toFixed(3).toString());
-    }, [current]);
-
-    const tan = useCallback(() => {
-        if (current === '') return;
-        setCurrent(Math.tan(parseFloat(toRadians(current))).toFixed(3).toString());
-    }, [current]);
+            updateHistory(operation, num1, num2, formattedResult);
+        } 
+        
+        catch (error) {
+            console.error('Error during calculation:', error);
+        }
+    }, 500);
 
     const chooseOperation = useCallback((op) => {
         if (current === '') return;
         if (previous !== '') {
-            computeValue();
+            computeRegularOperation();
         }
         setOperation(op);
         setPrevious(current);
         setCurrent('');
-    }, [current, previous, computeValue]);
+    }, [current, previous, computeRegularOperation]);
+
+    const computeSpecialOperation = debounce (async (operationType) => {
+        if (previous !== '') {
+            alert('Complete the current operation first before applying a special operation.');
+            return;
+        }
+    
+        if (current === '') {
+            alert('Enter a number before applying a special operation.');
+            return;
+        }
+
+        try {
+            const num1 = parseFloat(current);
+            const result = await calculate(operationType, num1);
+            const formattedResult = Number.isInteger(result) 
+                ? result : result.toFixed(3);
+            
+            setCurrent(formattedResult);
+            setPrevious('');
+            setOperation(undefined);
+            
+            updateHistory(operationType, num1, null, formattedResult);
+        } 
+        
+        catch (error) {
+            console.error('Calculation error: ', error);
+        }
+    }, 500);
 
     // lookup table for key presses
     const keyMap = useMemo(() => ({
@@ -119,15 +125,16 @@ function Calculator() {
         '+': () => chooseOperation('+'),
         '-': () => chooseOperation('-'),
         '*': () => chooseOperation('*'),
-        '/': () => chooseOperation('÷'),
-        '%': () => chooseOperation('÷'),
+        '/': () => chooseOperation('/'),
+        '%': () => chooseOperation('%'),
         '^': () => chooseOperation('^'),
-        '=': () => computeValue(),
-        'Enter': () => computeValue(),
+        '=': () => computeRegularOperation(),
+        'Enter': () => computeRegularOperation(),
         'Backspace': () => deleteNumber(),
+        'Delete': () => deleteNumber(),
         'c': () => clear(),
         'C': () => clear()
-    }), [addNumber, chooseOperation, computeValue, deleteNumber]);
+    }), [addNumber, chooseOperation, computeRegularOperation, deleteNumber]);
 
     // event listener for key presses
     useEffect(() => {
@@ -152,7 +159,7 @@ function Calculator() {
                     <div className='previous'>{previous} {operation}</div>
                     <div className='current'>{current}</div>
                 </div>
-                <button onClick={squareRoot}>√</button>
+                <button onClick={() => computeSpecialOperation('root')}>√</button>
                 <button className='larger' onClick={clear}>C</button>
                 <button onClick={deleteNumber}>DEL</button>
                 <button onClick={() => chooseOperation('÷')}>÷</button>
@@ -161,20 +168,20 @@ function Calculator() {
                 <button onClick={() => addNumber('8')}>8</button>
                 <button onClick={() => addNumber('9')}>9</button>
                 <button onClick={() => chooseOperation('*')}>*</button>
-                <button onClick={sin}>sin</button>
+                <button onClick={() => computeSpecialOperation('sin')}>sin</button>
                 <button onClick={() => addNumber('4')}>4</button>
                 <button onClick={() => addNumber('5')}>5</button>
                 <button onClick={() => addNumber('6')}>6</button>
                 <button onClick={() => chooseOperation('-')}>-</button>
-                <button onClick={cos}>cos</button>
+                <button onClick={() => computeSpecialOperation('cos')}>cos</button>
                 <button onClick={() => addNumber('1')}>1</button>
                 <button onClick={() => addNumber('2')}>2</button>
                 <button onClick={() => addNumber('3')}>3</button>
                 <button onClick={() => chooseOperation('+')}>+</button>
-                <button onClick={tan}>tan</button>
+                <button onClick={() => computeSpecialOperation('tan')}>tan</button>
                 <button onClick={() => addNumber('0')}>0</button>
                 <button onClick={() => addNumber('.')}>.</button>
-                <button className='larger' onClick={computeValue}>=</button>
+                <button className='larger' onClick={computeRegularOperation}>=</button>
             </div>
 
             <div className='history-container'>
