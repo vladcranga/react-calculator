@@ -39,9 +39,13 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 - calculation history
 - keyboard support
 
-![example picture](images/calculator.png)
-![the result](/images/result.png)
-![the history feature](/images/history.png)
+![example picture](public/assets/images/calculator.png)
+![the result](public/assets/images/result.png)
+![the history feature](public/assets/images/history.png)
+
+## Credits
+
+- Calculator icon by Arthur Zaynullin from [icon-icons](https://icon-icons.com/icon/calculator/72046).
 
 ## Licence
 
