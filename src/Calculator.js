@@ -155,7 +155,7 @@ function Calculator() {
     return (
         <div className='grid-calc'>
             <div className='calculator-container'>
-                <div className='screen'>
+                <div data-testid='screen' className='screen'>
                     <div className='previous'>{previous} {operation}</div>
                     <div className='current'>{current}</div>
                 </div>
@@ -197,4 +197,4 @@ function Calculator() {
     );
 }
 
-export default Calculator
+export default Calculator;

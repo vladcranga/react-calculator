@@ -3,27 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.5",
+    "cypress": "^13.14.2",
     "lodash.debounce": "^4.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
+    "save-dev": "0.0.1-security",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "jest --config jest.config.js",
+    "test:watch": "react-scripts test --watchAll",
+    "eject": "react-scripts eject",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "cypress/globals": true
+    },
     "extends": [
       "react-app",
-      "react-app/jest"
-    ]
+      "plugin:cypress/recommended"
+    ],
+    "plugins": ["cypress"]
   },
   "browserslist": {
     "production": [
@@ -36,5 +45,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-react": "^7.24.7",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "babel-jest": "^29.7.0",
+    "eslint-plugin-cypress": "^3.5.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   }
 }
