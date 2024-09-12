@@ -1,5 +1,5 @@
 # React Calculator
-A calculator made in React.
+A calculator made in React with an AWS Lambda backend.
 
 ## Installation Instructions
 
@@ -25,7 +25,10 @@ This project requires an API invoke URL. Obtain yours from AWS (or other service
 REACT_APP_API_URL=your_api_invoke_url
 ```
 
-4. Start the development server:
+This project uses AWS Lambda for the calculator backend, named 'calculatorBackend', and an API called 'CalculatorAPI'.
+The AWS Lambda function can be found in 'calculatorBackend/index.mjs'. You'll need to deploy the function and create an API Gateway to connect to it.
+
+5. Start the development server:
 ```
 npm start
 ```
