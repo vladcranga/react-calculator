@@ -2,6 +2,11 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { calculate } from './api';
 
+/** 
+ * This component renders a calculator with support for arithmetic operations,
+ * special functions, and calculation history. It interacts with an API for
+ * performing operations and maintains a history of calculations.
+*/
 function Calculator() {
     // state hooks
     const [current, setCurrent] = useState('');
@@ -9,19 +14,29 @@ function Calculator() {
     const [operation, setOperation] = useState(undefined);
     const [history, setHistory] = useState([]);
 
-    // calculator logic
+    // clear the current input
     const clear = () => {
         setCurrent('');
         setPrevious('');
         setOperation(undefined);
     };
 
+    // clear the calculation history
     const clearHistory = () => {
         setHistory([]);
     };
 
+    // the maximum number of displayed history entries
     const MAX_HISTORY_SIZE = 10
 
+    
+    /**
+     * Updates the calculation history.
+     * @param {string} operationType - The operation performed.
+     * @param {number} num1 - The first operand.
+     * @param {number|null} num2 - The second operand.
+     * @param {number} result - The result of the calculation.
+    */
     const updateHistory = (operationType, num1, num2, result) => {
         const historyEntry = num2 !== null
             ? `${num1} ${operationType} ${num2} = ${result}`
@@ -35,15 +50,25 @@ function Calculator() {
         });
     };
 
+    /**
+     * Deletes the last digit or character from the current input.
+    */
     const deleteNumber = useCallback(() => {
         setCurrent(current.toString().slice(0, -1));
     }, [current]);
 
+    /**
+     * Adds a number to the current input.
+     * @param {string} number - The number to add to the current input.
+    */
     const addNumber = useCallback((number) => {
         if (number === '.' && current.includes('.')) return;
         setCurrent(current.toString() + number.toString());
     }, [current]);
 
+    /**
+     * Performs a regular arithmetic operation.
+    */
     const computeRegularOperation = debounce(async () => {
         if (current === '' || previous === '') {
             alert('Enter two numbers and an operation before calculating.');
@@ -79,6 +104,9 @@ function Calculator() {
         setCurrent('');
     }, [current, previous, computeRegularOperation]);
 
+    /**
+     * Performs a special operation.
+    */
     const computeSpecialOperation = debounce (async (operationType) => {
         if (previous !== '') {
             alert('Complete the current operation first before applying a special operation.');
@@ -151,7 +179,7 @@ function Calculator() {
         };
     }, [keyMap]);
 
-    // html to jsx
+    // render the calculator's interface
     return (
         <div className='grid-calc'>
             <div className='calculator-container'>
