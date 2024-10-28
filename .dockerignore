@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+__tests__
+cypress
+cypress.config.js
+jest.config.js
+.env
+.git
+.github
+.gitignore
+.dockerignore
+README.md
