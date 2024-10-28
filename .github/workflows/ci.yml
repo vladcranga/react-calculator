@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 # When the workflow should run: push or pull request to main branch
 on:
